@@ -1,6 +1,7 @@
 use alexandria_math::sha512::sha512;
 use alexandria_bytes::{Bytes, BytesTrait};
 use alexandria_bytes::utils::{BytesDisplay, BytesDebug};
+use super::utils;
 
 const BLOCK_SIZE: usize = 128;
 
@@ -11,19 +12,6 @@ fn pad_to_block_size(ref x: Array<u8>) -> usize {
     len += 1;
   };
   len
-}
-
-fn bytes_to_u8array(src: @Bytes) -> Array<u8> {
-  let mut dst: Array<u8> = array![];
-
-  let mut index = 0;
-  while index < src.size() {
-    let (_, v) = src.read_u8(index);
-    dst.append(v);
-    index += 1;
-  };
-
-  dst
 }
 
 pub fn hmac_sha512(mut key: Array<u8>, data: Array<u8>) -> Array<u8> {
@@ -52,7 +40,7 @@ pub fn hmac_sha512(mut key: Array<u8>, data: Array<u8>) -> Array<u8> {
     index += 1;
   };
   
-  let to_hash = bytes_to_u8array(@b);
+  let to_hash = utils::bytes_to_u8array(@b);
   let hashed = sha512(to_hash);
 
   // reuse key to be more efficient (is it true ???)
